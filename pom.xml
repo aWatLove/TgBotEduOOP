@@ -18,7 +18,6 @@
     </properties>
 
     <dependencies>
-        <!-- Telegram API -->
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
