@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class Bot extends TelegramLongPollingBot {
     private final String BOT_NAME = "dicetodicebot";
-    private final String BOT_TOKEN = "5803181116:AAGGX1ID993q3FXqxXy4848p1lI1z62Obqc";
+    private final String BOT_TOKEN = "";
     CharacterList characterList;
 
     @Override
@@ -49,7 +49,6 @@ public class Bot extends TelegramLongPollingBot {
             argument = textMessages[1];
         }
 
-        //Сравниваем текст пользователя с нашими командами, на основе этого формируем ответ
         switch (textMessages[0]) {
             case "/start":
                 response = "Приветствую, этот бот что то умеет\n" +
