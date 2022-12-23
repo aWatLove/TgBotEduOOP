@@ -5,12 +5,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.dicetodice.storage.Storage;
 
 public class Bot extends TelegramLongPollingBot {
     private final String BOT_NAME = "dicetodicebot";
     private final String BOT_TOKEN = "5803181116:AAGGX1ID993q3FXqxXy4848p1lI1z62Obqc";
-    public Storage storage = new Storage();
     CharacterList characterList;
 
     @Override
@@ -27,21 +25,16 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             if (update.hasMessage() && update.getMessage().hasText()) {
-                //Извлекаем из объекта сообщение пользователя
                 Message inMess = update.getMessage();
-                //Достаем из inMess id чата пользователя
                 String chatId = inMess.getChatId().toString();
-                //Получаем текст сообщения пользователя, отправляем в написанный нами обработчик
                 String response = parseMessage(inMess.getText(), chatId);
-                //Создаем объект класса SendMessage - наш будущий ответ пользователю
                 SendMessage outMess = new SendMessage();
 
                 //Добавляем в наше сообщение id чата а также наш ответ
                 outMess.setChatId(chatId);
                 outMess.setText(response);
 
-                //Отправка в чат
-                execute(outMess);
+                execute(outMess);//Отправка в чат
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -59,14 +52,25 @@ public class Bot extends TelegramLongPollingBot {
         //Сравниваем текст пользователя с нашими командами, на основе этого формируем ответ
         switch (textMessages[0]) {
             case "/start":
-                response = "Приветствую, этот бот что то умеет" +
-                        "\n /roll - roll d20" +
-                        "\n/roll {Количество}d{Dice} - кидает несколько кубов";
+                response = "Приветствую, этот бот что то умеет\n" +
+                        "\n/roll - Кидает кубик 1d20" +
+                        "\n/roll {кол-во}d{Dice} - кидает несколько кубов" +
+                        "\n/char - выводит ваш чарлист" +
+                        "\n/char create - создает чарлист со стандартными характеристиками" +
+                        "\n/char create {6 характеристик} - создаёт чарлист с вашими характеристиками" +
+                        "\n/char set - задает стандартные характеристики" +
+                        "\n/char set {6 характеристик} - задает характеристики";
                 break;
 
 
-            case "/get":
-                response = storage.getRandQuote();
+            case "/help":
+                response = "\n/roll - Кидает кубик 1d20" +
+                        "\n/roll {кол-во}d{Dice} - кидает несколько кубов" +
+                        "\n/char - выводит ваш чарлист" +
+                        "\n/char create - создает чарлист со стандартными характеристиками" +
+                        "\n/char create {6 характеристик} - создаёт чарлист с вашими характеристиками" +
+                        "\n/char set - задает стандартные характеристики" +
+                        "\n/char set {6 характеристик} - задает характеристики";;
                 break;
 
 
@@ -89,7 +93,9 @@ public class Bot extends TelegramLongPollingBot {
                             }
 
                             if (textMessages.length == 8) {     //все характеристики передали
-                                if(!(CharacterList.checkChar(textMessages[2], textMessages[3], textMessages[4], textMessages[5], textMessages[6], textMessages[7]))){
+                                if(!(CharacterList.checkChar(
+                                        textMessages[2], textMessages[3], textMessages[4],
+                                        textMessages[5], textMessages[6], textMessages[7]))){
                                     response = "Некоректные данные!";
                                     break;
                                 }
@@ -122,7 +128,7 @@ public class Bot extends TelegramLongPollingBot {
                                 break;
                             }
                         default:
-                            response = "По каким-то причинам произошли неполадки";
+                            response = "Неверный аргумент!";
                             break;
                     }
                     break;
@@ -137,7 +143,8 @@ public class Bot extends TelegramLongPollingBot {
 
                 }
             default:
-                response = "Сообщение не распознано";
+                response = "У меня нет такой команды." +
+                        "\n/help - для помощи";
                 break;
         }
 
